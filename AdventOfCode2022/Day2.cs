@@ -29,8 +29,48 @@ namespace AdventOfCode2022
 
         public async Task<string> Part2()
         {
-            throw new NotImplementedException();
+            var lines = await File.ReadAllLinesAsync("Day2.txt");
+
+            var totalScore = 0;
+
+            foreach (var line in lines)
+            {
+                var glyphs = line.Split(" ");
+                var theirThrow = NormaliseGlyph(glyphs[0]);
+                var desiredOutcome = glyphs[1];
+
+                var ourThrow = desiredOutcome switch
+                {
+                    "X" => LoseGame(theirThrow),
+                    "Y" => theirThrow,
+                    "Z" => WinGame(theirThrow),
+                    _ => throw new ArgumentOutOfRangeException(nameof(desiredOutcome)),
+                };
+
+                totalScore += GetThrowScore(ourThrow);
+                totalScore += GetGameScore(ourThrow, theirThrow);
+            }
+
+            return totalScore.ToString();
         }
+
+        private static char LoseGame(char input)
+            => input switch
+            {
+                'R' => 'S',
+                'P' => 'R',
+                'S' => 'P',
+                _ => throw new ArgumentOutOfRangeException(nameof(input)),
+            };
+
+        private static char WinGame(char input)
+            => input switch
+            {
+                'R' => 'P',
+                'P' => 'S',
+                'S' => 'R',
+                _ => throw new ArgumentOutOfRangeException(nameof(input)),
+            };
 
         private static char NormaliseGlyph(string input)
             => input switch
