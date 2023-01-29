@@ -4,24 +4,35 @@
     {
         public async static Task Main(string[] args)
         {
-            var lines = await File.ReadAllLinesAsync("Day1.txt");
+            Console.WriteLine("Enter day");
 
-            var totals = new List<int>();
-            var total = 0;
-            foreach (var line in lines)
+            if (!int.TryParse(Console.ReadLine(), out var day))
             {
-                if (string.IsNullOrWhiteSpace(line))
-                {
-                    totals.Add(total);
-                    total = 0;
-                    continue;
-                }
-
-                total += int.Parse(line);
+                Console.WriteLine("Enter an integer day");
+                Console.Read();
+                return;
             }
 
-            Console.WriteLine(totals.Max());
-            Console.WriteLine(totals.OrderByDescending(t => t).Take(3).Sum());
+            Console.WriteLine("Enter part; 1 or 2");
+
+            if (!int.TryParse(Console.ReadLine(), out var part) && part > 2 && part < 1)
+            {
+                Console.WriteLine("Enter a part; 1 or 2");
+                Console.Read();
+                return;
+            }
+
+            IDay dayCalculator = day switch
+            {
+                1 => new Day1(),
+                2 => new Day2(),
+                _ => throw new NotImplementedException(),
+            };
+
+            Console.WriteLine(part == 1
+                ? await dayCalculator.Part1()
+                : await dayCalculator.Part2());
+
             Console.Read();
         }
     }
